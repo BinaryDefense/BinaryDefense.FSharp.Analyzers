@@ -7,6 +7,7 @@ module Hashing =
     open FSharp.Compiler.Range
 
     let rec visitExpr memberCallHandler (e:FSharpExpr) =
+        // printfn "e -> %A" e
         match e with
         | BasicPatterns.AddressOf(lvalueExpr) ->
             visitExpr memberCallHandler lvalueExpr
@@ -19,7 +20,7 @@ module Hashing =
             visitObjArg memberCallHandler objExprOpt; visitExprs memberCallHandler argExprs
         | BasicPatterns.Coerce(targetType, inpExpr) ->
             visitExpr memberCallHandler inpExpr
-        | BasicPatterns.FastIntegerForLoop(startExpr, limitExpr, consumeExpr, isUp) ->
+        | BasicPatterns .FastIntegerForLoop(startExpr, limitExpr, consumeExpr, isUp) ->
             visitExpr memberCallHandler startExpr; visitExpr memberCallHandler limitExpr; visitExpr memberCallHandler consumeExpr
         | BasicPatterns.ILAsm(asmCode, typeArgs, argExprs) ->
             visitExprs memberCallHandler argExprs
@@ -87,12 +88,24 @@ module Hashing =
             visitExpr memberCallHandler valueExpr
         | BasicPatterns.WhileLoop(guardExpr, bodyExpr) ->
             visitExpr memberCallHandler guardExpr; visitExpr memberCallHandler bodyExpr
-        | BasicPatterns.BaseValue baseType -> ()
-        | BasicPatterns.DefaultValue defaultType -> ()
-        | BasicPatterns.ThisValue thisType -> ()
-        | BasicPatterns.Const(constValueObj, constType) -> ()
-        | BasicPatterns.Value(valueToGet) -> ()
-        | _ -> ()
+        | BasicPatterns.BaseValue baseType ->
+            // printfn "BaseValue: %A" baseType;
+            ()
+        | BasicPatterns.DefaultValue defaultType ->
+            // printfn "DefaultValue: %A" defaultType;
+            ()
+        | BasicPatterns.ThisValue thisType ->
+            // printfn "ThisValue: %A" thisType;
+            ()
+        | BasicPatterns.Const(constValueObj, constType) ->
+            // printfn "Const: %A" (constValueObj, constType);
+            ()
+        | BasicPatterns.Value(valueToGet) ->
+            // printfn "Value: %A" valueToGet;
+            memberCallHandler e.Range valueToGet
+        | other ->
+            // printfn "Other: %A" other;
+            ()
 
     and visitExprs f exprs =
         List.iter (visitExpr f) exprs
@@ -113,20 +126,41 @@ module Hashing =
         | FSharpImplementationFileDeclaration.InitAction(e) ->
             visitExpr f e
 
+    type WeakHash =
+    | MD5
+    | SHA1
+
+    let matchers =
+        [
+            "System.Security.Cryptography.MD5CryptoServiceProvider", MD5
+            "System.Security.Cryptography.MD5.Create", MD5
+            "System.Security.Cryptography.SHA1CryptoServiceProvider", SHA1
+            "System.Security.Cryptography.SHA1.Create", SHA1
+        ] |> dict
+
     [<Analyzer>]
-    let optionValueAnalyzer : Analyzer =
+    let weakHashingAnalyzer : Analyzer =
         fun ctx ->
-            let state = ResizeArray<range>()
+            let state = ResizeArray<WeakHash * range>()
             let handler (range: range) (m: FSharpMemberOrFunctionOrValue) =
-                let name = String.Join(".", m.DeclaringEntity.Value.FullName, m.DisplayName)
-                if name = "Microsoft.FSharp.Core.FSharpOption`1.Value" then
-                    state.Add range
+                // printfn "%A" m
+                printfn "%A" m.FullTypeSafe
+                let name =
+                    if m.DeclaringEntity.IsSome then
+                        String.Join(".", m.DeclaringEntity.Value.FullName, m.DisplayName)
+                    else
+                        m.FullTypeSafe.Value.Format(FSharpDisplayContext.Empty)
+                // printfn "name -> %s" name
+                match matchers.TryGetValue name with
+                | (true, v) ->
+                    state.Add (v, range)
+                | _ -> ()
             ctx.TypedTree.Declarations |> List.iter (visitDeclaration handler)
             state
-            |> Seq.map (fun r ->
-                { Type = "Option.Value analyzer"
-                  Message = "Option.Value shouldn't be used"
-                  Code = "OV001"
+            |> Seq.map (fun (hash, r) ->
+                { Type = "Weak hashing analyzer"
+                  Message = sprintf "%A shouldn't be used.  Consider changing to SHA256 or SHA512." hash
+                  Code = "BD-0001"
                   Severity = Warning
                   Range = r
                   Fixes = []}
