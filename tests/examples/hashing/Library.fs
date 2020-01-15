@@ -10,4 +10,6 @@ module Say =
         let sha1provider = SHA1CryptoServiceProvider()
         let bytes = md5provider.ComputeHash(UTF8Encoding().GetBytes(name))
         let bytes2 = sha1provider.ComputeHash(UTF8Encoding().GetBytes(name))
+        bytes |> ignore
+        bytes2 |> ignore
         ()

@@ -13,6 +13,10 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "docsTool", "docsTool\docsTo
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "BinaryDefense.FSharp.Analyzers.Hashing", "src\BinaryDefense.FSharp.Analyzers.Hashing\BinaryDefense.FSharp.Analyzers.Hashing.fsproj", "{AAFC4496-746A-44AC-A4B1-CECC4ADED6CD}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "examples", "examples", "{4CA3F686-DFAB-4AAF-8004-4158E18EF24E}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "hashing", "tests\examples\hashing\hashing.fsproj", "{8FC9B600-2A16-4E0C-89D7-F61F5F315F3E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -62,9 +66,23 @@ Global
 		{AAFC4496-746A-44AC-A4B1-CECC4ADED6CD}.Release|x64.Build.0 = Release|Any CPU
 		{AAFC4496-746A-44AC-A4B1-CECC4ADED6CD}.Release|x86.ActiveCfg = Release|Any CPU
 		{AAFC4496-746A-44AC-A4B1-CECC4ADED6CD}.Release|x86.Build.0 = Release|Any CPU
+		{8FC9B600-2A16-4E0C-89D7-F61F5F315F3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8FC9B600-2A16-4E0C-89D7-F61F5F315F3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8FC9B600-2A16-4E0C-89D7-F61F5F315F3E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{8FC9B600-2A16-4E0C-89D7-F61F5F315F3E}.Debug|x64.Build.0 = Debug|Any CPU
+		{8FC9B600-2A16-4E0C-89D7-F61F5F315F3E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8FC9B600-2A16-4E0C-89D7-F61F5F315F3E}.Debug|x86.Build.0 = Debug|Any CPU
+		{8FC9B600-2A16-4E0C-89D7-F61F5F315F3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8FC9B600-2A16-4E0C-89D7-F61F5F315F3E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8FC9B600-2A16-4E0C-89D7-F61F5F315F3E}.Release|x64.ActiveCfg = Release|Any CPU
+		{8FC9B600-2A16-4E0C-89D7-F61F5F315F3E}.Release|x64.Build.0 = Release|Any CPU
+		{8FC9B600-2A16-4E0C-89D7-F61F5F315F3E}.Release|x86.ActiveCfg = Release|Any CPU
+		{8FC9B600-2A16-4E0C-89D7-F61F5F315F3E}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{1CA2E092-2320-451D-A4F0-9ED7C7C528CA} = {ACBEE43C-7A88-4FB1-9B06-DB064D22B29F}
 		{AAFC4496-746A-44AC-A4B1-CECC4ADED6CD} = {C397A34C-84F1-49E7-AEBC-2F9F2B196216}
+		{4CA3F686-DFAB-4AAF-8004-4158E18EF24E} = {ACBEE43C-7A88-4FB1-9B06-DB064D22B29F}
+		{8FC9B600-2A16-4E0C-89D7-F61F5F315F3E} = {4CA3F686-DFAB-4AAF-8004-4158E18EF24E}
 	EndGlobalSection
 EndGlobal
