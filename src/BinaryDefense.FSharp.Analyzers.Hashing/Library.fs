@@ -155,12 +155,13 @@ module Hashing =
                 | (true, v) ->
                     state.Add (v, range)
                 | _ -> ()
+            printfn "ctx.TypedTree.Declarations --> %A" ctx.TypedTree.Declarations
             ctx.TypedTree.Declarations |> List.iter (visitDeclaration handler)
             state
             |> Seq.map (fun (hash, r) ->
                 { Type = "Weak hashing analyzer"
                   Message = sprintf "%A shouldn't be used.  Consider changing to SHA256 or SHA512." hash
-                  Code = "BD-0001"
+                  Code = "BD0001"
                   Severity = Warning
                   Range = r
                   Fixes = []}
