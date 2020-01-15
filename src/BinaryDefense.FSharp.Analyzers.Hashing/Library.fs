@@ -144,7 +144,7 @@ module Hashing =
             let state = ResizeArray<WeakHash * range>()
             let handler (range: range) (m: FSharpMemberOrFunctionOrValue) =
                 // printfn "%A" m
-                printfn "%A" m.FullTypeSafe
+                // printfn "%A" m.FullTypeSafe
                 let name =
                     if m.DeclaringEntity.IsSome then
                         String.Join(".", m.DeclaringEntity.Value.FullName, m.DisplayName)

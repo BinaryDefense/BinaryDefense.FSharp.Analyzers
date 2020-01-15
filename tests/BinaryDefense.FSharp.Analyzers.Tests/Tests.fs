@@ -16,9 +16,8 @@ let tests =
             ]
             let result =
                 (AnalyzerBootstrap.runProject
-                    "/Users/jimmybyrd/Documents/GitHub/BinaryDefense.FSharp.Analyzers/tests/examples/hashing/hashing.fsproj"
-                    []
+                    "/Users/jimmybyrd/Documents/GitHub/BinaryDefense.FSharp.Analyzers/tests/examples/hashing/Library.fs"
                     analyzers).Value
-            printfn "%A" result
+            // printfn "%A" result
             Expect.hasLength result 4 "Should contain results"
     ]
