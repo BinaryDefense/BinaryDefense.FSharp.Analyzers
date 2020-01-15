@@ -14,9 +14,11 @@ let tests =
             let analyzers = [
                 Hashing.weakHashingAnalyzer
             ]
+            let file = IO.Path.Combine(__SOURCE_DIRECTORY__ ,"../examples/hashing/Library.fs")
+
             let result =
                 (AnalyzerBootstrap.runProject
-                    "/Users/jimmybyrd/Documents/GitHub/BinaryDefense.FSharp.Analyzers/tests/examples/hashing/Library.fs"
+                    file
                     analyzers).Value
             // printfn "%A" result
             Expect.hasLength result 4 "Should contain results"
