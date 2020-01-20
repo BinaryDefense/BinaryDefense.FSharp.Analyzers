@@ -16,6 +16,11 @@ module Hashing =
         | BasicPatterns.Application(funcExpr, typeArgs, argExprs) ->
             visitExpr memberCallHandler funcExpr; visitExprs memberCallHandler argExprs
         | BasicPatterns.Call(objExprOpt, memberOrFunc, typeArgs1, typeArgs2, argExprs) ->
+            // printfn "objExprOpt -> %A " objExprOpt
+            // printfn "memberOrFunc -> %A" memberOrFunc
+            // printfn "typeArgs1 -> %A " typeArgs1
+            // printfn "typeArgs2 -> %A " typeArgs2
+            // printfn "argExprs -> %A " argExprs
             memberCallHandler e.Range memberOrFunc
             visitObjArg memberCallHandler objExprOpt; visitExprs memberCallHandler argExprs
         | BasicPatterns.Coerce(targetType, inpExpr) ->
@@ -41,6 +46,8 @@ module Hashing =
         | BasicPatterns.NewDelegate(delegateType, delegateBodyExpr) ->
             visitExpr memberCallHandler delegateBodyExpr
         | BasicPatterns.NewObject(objType, typeArgs, argExprs) ->
+            // printfn "NewObject.objType -> %A" objType
+            memberCallHandler e.Range objType
             visitExprs memberCallHandler argExprs
         | BasicPatterns.NewRecord(recordType, argExprs) ->
             visitExprs memberCallHandler argExprs
@@ -130,6 +137,17 @@ module Hashing =
     | MD5
     | SHA1
 
+    let waitForDebuggerAttached (programName) =
+    #if DEBUG
+        if not(System.Diagnostics.Debugger.IsAttached) then
+          printfn "Please attach a debugger for %s, PID: %d" programName (System.Diagnostics.Process.GetCurrentProcess().Id)
+        while not(System.Diagnostics.Debugger.IsAttached) do
+          System.Threading.Thread.Sleep(100)
+        System.Diagnostics.Debugger.Break()
+    #else
+    ()
+    #endif
+
     let matchers =
         [
             "System.Security.Cryptography.MD5CryptoServiceProvider", MD5
@@ -140,6 +158,7 @@ module Hashing =
 
     [<Analyzer>]
     let weakHashingAnalyzer : Analyzer =
+        // waitForDebuggerAttached ("App")
         fun ctx ->
             let state = ResizeArray<WeakHash * range>()
             let handler (range: range) (m: FSharpMemberOrFunctionOrValue) =
@@ -151,11 +170,15 @@ module Hashing =
                     else
                         m.FullTypeSafe.Value.Format(FSharpDisplayContext.Empty)
                 // printfn "name -> %s" name
-                match matchers.TryGetValue name with
-                | (true, v) ->
-                    state.Add (v, range)
+
+                match
+                    matchers
+                    |> Seq.tryFind(fun k -> name.Contains(k.Key))
+                    with
+                | Some v ->
+                    state.Add (v.Value, range)
                 | _ -> ()
-            printfn "ctx.TypedTree.Declarations --> %A" ctx.TypedTree.Declarations
+            // printfn "ctx.TypedTree.Declarations --> %A" ctx.TypedTree.Declarations
             ctx.TypedTree.Declarations |> List.iter (visitDeclaration handler)
             state
             |> Seq.map (fun (hash, r) ->

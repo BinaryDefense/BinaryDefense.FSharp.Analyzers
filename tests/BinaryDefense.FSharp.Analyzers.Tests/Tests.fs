@@ -7,6 +7,9 @@ open BinaryDefense.FSharp.Analyzers
 
 
 
+
+
+
 [<Tests>]
 let tests =
     testList "Hashing Tests" [
@@ -14,12 +17,14 @@ let tests =
             let analyzers = [
                 Hashing.weakHashingAnalyzer
             ]
+            let hashed = examples.Hashing.hello "hello"
+
             let file = IO.Path.Combine(__SOURCE_DIRECTORY__ ,"../examples/hashing/Library.fs")
 
             let result =
                 (AnalyzerBootstrap.runProject
                     file
                     analyzers).Value
-            // printfn "%A" result
-            Expect.hasLength result 4 "Should contain results"
+
+            Expect.hasLength result 7 "Should contain results"
     ]

@@ -13,11 +13,27 @@ let checker =
         ImplicitlyStartBackgroundWork = true)
 
 
+let dumpOpts (opts :  FSharpProjectOptions) =
+    printfn  "FSharpProjectOptions.OtherOptions ->"
+    opts.OtherOptions
+    |> Array.iter(printfn "%s")
+
 let loadProject file =
     async {
         let! source = IO.File.ReadAllTextAsync file |> Async.AwaitTask
         let! (opts, error) = checker.GetProjectOptionsFromScript(file, SourceText.ofString source, assumeDotNetFramework = false, useSdkRefs = true, useFsiAuxLib = true, otherFlags = [|"--targetprofile:netstandard" |])
-        return file,opts
+        let newOO =
+            opts.OtherOptions
+            |> Array.map(fun i ->
+                if i.StartsWith("-r:") then
+                    let path = i.Split("-r:", StringSplitOptions.RemoveEmptyEntries).[0]
+
+                    sprintf "-r:%s" (IO.FileInfo(path).FullName)
+                else
+                    i
+            )
+        // dumpOpts opts
+        return file,{ opts with OtherOptions = newOO}
     } |> Async.RunSynchronously
 
 let typeCheckFile (file,opts) =

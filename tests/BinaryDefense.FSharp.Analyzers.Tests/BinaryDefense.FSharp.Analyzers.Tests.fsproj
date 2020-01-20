@@ -12,6 +12,7 @@
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="../../src/BinaryDefense.FSharp.Analyzers.Hashing/BinaryDefense.FSharp.Analyzers.Hashing.fsproj" />
+        <ProjectReference Include="..\examples\hashing\hashing.fsproj" />
     </ItemGroup>
     <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>
