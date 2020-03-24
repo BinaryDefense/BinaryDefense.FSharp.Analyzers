@@ -137,6 +137,10 @@ module Hashing =
     | MD5
     | SHA1
 
+    let toCode = function
+    | MD5 -> "BDH0001"
+    | SHA1 -> "BDH0002"
+
     // let waitForDebuggerAttached (programName) =
     // #if DEBUG
     //     if not(System.Diagnostics.Debugger.IsAttached) then
@@ -184,7 +188,7 @@ module Hashing =
             |> Seq.map (fun (hash, r) ->
                 { Type = "Weak hashing analyzer"
                   Message = sprintf "%A shouldn't be used.  Consider changing to SHA256 or SHA512." hash
-                  Code = "BD0001"
+                  Code = toCode hash
                   Severity = Warning
                   Range = r
                   Fixes = []}
