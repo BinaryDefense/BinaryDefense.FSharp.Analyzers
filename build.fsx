@@ -152,13 +152,13 @@ module dotnet =
 type private DisposableDirectory (directory : string) =
     static member Create() =
         let tempPath = IO.Path.Combine(IO.Path.GetTempPath(), Guid.NewGuid().ToString("n"))
-        printfn "Creating directory %s" tempPath
+        Trace.tracefn "Creating disposable directory %s" tempPath
         IO.Directory.CreateDirectory tempPath |> ignore
         new DisposableDirectory(tempPath)
     member x.DirectoryInfo = IO.DirectoryInfo(directory)
     interface IDisposable with
         member x.Dispose() =
-            printfn "Deleting directory %s" x.DirectoryInfo.FullName
+            Trace.tracefn "Deleting disposable directory %s" x.DirectoryInfo.FullName
             IO.Directory.Delete(x.DirectoryInfo.FullName,true)
 
 open DocsTool.CLIArgs
@@ -358,9 +358,7 @@ let generateAssemblyInfo _ =
 let dotnetPack ctx =
 
     // Analyzers need some additional work to bundle 3rd party dependencies: see https://github.com/ionide/FSharp.Analyzers.SDK#packaging-and-distribution
-
     let publishFramework = "netcoreapp2.0"
-
     let args =
         [
             sprintf "/p:PackageVersion=%s" releaseNotes.NugetVersion
@@ -377,11 +375,13 @@ let dotnetPack ctx =
                     c.Common
                     |> DotNet.Options.withAdditionalArgs args
             }) proj
+
         DotNet.publish (fun c ->
             { c with
                 Configuration = configuration
                 Framework = Some publishFramework
             }) proj
+
         let nupkg =
             let projectName = IO.Path.GetFileNameWithoutExtension proj
             IO.Directory.GetFiles distDir
@@ -391,7 +391,7 @@ let dotnetPack ctx =
             |> IO.FileInfo
 
         let publishPath = IO.FileInfo(proj).Directory.FullName </> "bin" </> (string configuration) </> publishFramework </> "publish"
-        // printfn "publishPath -> %s" publishPath
+
         use dd = DisposableDirectory.Create()
          // Unzip the nuget
         ZipFile.ExtractToDirectory(nupkg.FullName, dd.DirectoryInfo.FullName)
