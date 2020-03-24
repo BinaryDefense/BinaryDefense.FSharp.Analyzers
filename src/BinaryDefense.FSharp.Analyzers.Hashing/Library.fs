@@ -137,16 +137,16 @@ module Hashing =
     | MD5
     | SHA1
 
-    let waitForDebuggerAttached (programName) =
-    #if DEBUG
-        if not(System.Diagnostics.Debugger.IsAttached) then
-          printfn "Please attach a debugger for %s, PID: %d" programName (System.Diagnostics.Process.GetCurrentProcess().Id)
-        while not(System.Diagnostics.Debugger.IsAttached) do
-          System.Threading.Thread.Sleep(100)
-        System.Diagnostics.Debugger.Break()
-    #else
-    ()
-    #endif
+    // let waitForDebuggerAttached (programName) =
+    // #if DEBUG
+    //     if not(System.Diagnostics.Debugger.IsAttached) then
+    //       printfn "Please attach a debugger for %s, PID: %d" programName (System.Diagnostics.Process.GetCurrentProcess().Id)
+    //     while not(System.Diagnostics.Debugger.IsAttached) do
+    //       System.Threading.Thread.Sleep(100)
+    //     System.Diagnostics.Debugger.Break()
+    // #else
+    // ()
+    // #endif
 
     let matchers =
         [

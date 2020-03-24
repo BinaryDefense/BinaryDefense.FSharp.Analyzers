@@ -407,16 +407,11 @@ let dotnetPack ctx =
 
 
 
-let sourceLinkTest _ =
-    !! distGlob
-    |> Seq.iter (fun nupkg ->
-        dotnet.sourcelink id (sprintf "test %s" nupkg)
-    )
-
 let publishToNuget _ =
     isReleaseBranchCheck ()
     Paket.push(fun c ->
         { c with
+            ApiKey = Environment.environVar "BD_NUGET_TOKEN"
             ToolType = ToolType.CreateLocalTool()
             PublishUrl = publishUrl
             WorkingDir = "dist"
@@ -509,7 +504,6 @@ Target.create "GenerateCoverageReport" generateCoverageReport
 Target.create "WatchTests" watchTests
 Target.create "GenerateAssemblyInfo" generateAssemblyInfo
 Target.create "DotnetPack" dotnetPack
-Target.create "SourceLinkTest" sourceLinkTest
 Target.create "PublishToNuGet" publishToNuget
 Target.create "GitRelease" gitRelease
 Target.create "GitHubRelease" githubRelease
@@ -548,7 +542,6 @@ Target.create "ReleaseDocs" releaseDocs
     ==> "DotnetTest"
     =?> ("GenerateCoverageReport", not disableCodeCoverage)
     ==> "DotnetPack"
-    ==> "SourceLinkTest"
     ==> "PublishToNuGet"
     ==> "GitRelease"
     ==> "GitHubRelease"

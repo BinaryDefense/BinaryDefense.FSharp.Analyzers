@@ -2,7 +2,7 @@
 namespace System
 open System.Reflection
 
-[<assembly: AssemblyTitleAttribute("BinaryDefense.FSharp.Analyzers.Hashing")>]
+[<assembly: AssemblyTitleAttribute("hashing")>]
 [<assembly: AssemblyProductAttribute("BinaryDefense.FSharp.Analyzers")>]
 [<assembly: AssemblyVersionAttribute("0.1.0")>]
 [<assembly: AssemblyMetadataAttribute("ReleaseDate","2020-03-24T00:00:00.0000000")>]
@@ -13,7 +13,7 @@ open System.Reflection
 do ()
 
 module internal AssemblyVersionInformation =
-    let [<Literal>] AssemblyTitle = "BinaryDefense.FSharp.Analyzers.Hashing"
+    let [<Literal>] AssemblyTitle = "hashing"
     let [<Literal>] AssemblyProduct = "BinaryDefense.FSharp.Analyzers"
     let [<Literal>] AssemblyVersion = "0.1.0"
     let [<Literal>] AssemblyMetadata_ReleaseDate = "2020-03-24T00:00:00.0000000"
