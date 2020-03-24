@@ -4,9 +4,7 @@ open System
 open Expecto
 open BinaryDefense.FSharp.Analyzers
 
-let analyzers = [
-                    Hashing.weakHashingAnalyzer
-                ]
+let analyzers = [ Hashing.weakHashingAnalyzer ]
 
 let testSeq name tests = testList name (List.ofSeq tests)
 
@@ -30,7 +28,6 @@ let tests =
                 |> Seq.iter(fun r ->
                     Expect.stringContains r.Message "MD5" ""
                 )
-
             "Check SHA1.Create() binding", fun analyzers () ->
                 let file = IO.Path.Combine(__SOURCE_DIRECTORY__ ,"../examples/hashing/sha1create.fs")
                 let results = (AnalyzerBootstrap.runProject file analyzers).Value
@@ -47,7 +44,6 @@ let tests =
                 |> Seq.iter(fun r ->
                     Expect.stringContains r.Message "SHA1" ""
                 )
-
             "Check SHACryptoServiceProvider ctor", fun analyzers () ->
                 let file = IO.Path.Combine(__SOURCE_DIRECTORY__ ,"../examples/hashing/sha1CryptoServicector.fs")
                 let results = (AnalyzerBootstrap.runProject file analyzers).Value

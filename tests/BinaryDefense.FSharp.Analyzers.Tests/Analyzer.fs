@@ -18,17 +18,23 @@ let dumpOpts (opts :  FSharpProjectOptions) =
     opts.OtherOptions
     |> Array.iter(printfn "%s")
 
+/// This will fix relative paths and make them absolute
+let toAbsolutePath path =
+    FileInfo(path).FullName
+
 let loadProject file =
     async {
         let! source = IO.File.ReadAllTextAsync file |> Async.AwaitTask
         let! (opts, error) = checker.GetProjectOptionsFromScript(file, SourceText.ofString source, assumeDotNetFramework = false, useSdkRefs = true, useFsiAuxLib = true, otherFlags = [|"--targetprofile:netstandard" |])
+        //HACK: fixes references on windows. See https://github.com/fsharp/FSharp.Compiler.Service/issues/920#issuecomment-576355140
         let newOO =
             opts.OtherOptions
             |> Array.map(fun i ->
                 if i.StartsWith("-r:") then
-                    let path = i.Split("-r:", StringSplitOptions.RemoveEmptyEntries).[0]
-
-                    sprintf "-r:%s" (IO.FileInfo(path).FullName)
+                    i.Split("-r:", StringSplitOptions.RemoveEmptyEntries)
+                    |> Array.head
+                    |> toAbsolutePath
+                    |> sprintf "-r:%s"
                 else
                     i
             )
