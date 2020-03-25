@@ -1,10 +1,12 @@
 namespace BinaryDefense.FSharp.Analyzers
-
+open System.Security.Cryptography
+open System.Text
 module Hashing =
     open System
     open FSharp.Analyzers.SDK
     open FSharp.Compiler.SourceCodeServices
     open FSharp.Compiler.Range
+
 
     let rec visitExpr memberCallHandler (e:FSharpExpr) =
         // printfn "e -> %A" e
@@ -152,46 +154,58 @@ module Hashing =
     // ()
     // #endif
 
+    let forTheReflectionGods () =
+        use sha1 = SHA1.Create()
+        sha1.ComputeHash(UTF8Encoding().GetBytes("foo"))
+
     let matchers =
         [
             "System.Security.Cryptography.MD5CryptoServiceProvider", MD5
             "System.Security.Cryptography.MD5.Create", MD5
             "System.Security.Cryptography.SHA1CryptoServiceProvider", SHA1
-            "System.Security.Cryptography.SHA1.Create", SHA1
+            (sprintf "%s.Create" typedefof<SHA1>.FullName), SHA1
         ] |> dict
 
+    forTheReflectionGods () |> printfn "%A"
     [<Analyzer>]
     let weakHashingAnalyzer : Analyzer =
         // waitForDebuggerAttached ("App")
         fun ctx ->
-            let state = ResizeArray<WeakHash * range>()
-            let handler (range: range) (m: FSharpMemberOrFunctionOrValue) =
-                // printfn "%A" m
-                // printfn "%A" m.FullTypeSafe
-                let name =
-                    if m.DeclaringEntity.IsSome then
-                        String.Join(".", m.DeclaringEntity.Value.FullName, m.DisplayName)
-                    else
-                        m.FullTypeSafe.Value.Format(FSharpDisplayContext.Empty)
-                // printfn "name -> %s" name
+            if ctx.FileName.EndsWith("AssemblyInfo.fs") then
+                []
+            else
+                let state = ResizeArray<WeakHash * range>()
+                let handler (range: range) (m: FSharpMemberOrFunctionOrValue) =
+                    printfn "DeclaringEntity --> %A" m.DeclaringEntity
+                    printfn "TryGetFullDisplayName -> %A" <| m.TryGetFullDisplayName()
+                    printfn "FullTypeSafe -> %A" m.FullTypeSafe
+                    // let v = m.
+                    // v.
+                    // printfn "%A"
+                    let name =
+                        if m.DeclaringEntity.IsSome then
+                            String.Join(".", m.DeclaringEntity.Value.FullName, m.DisplayName)
+                        else
+                            m.FullTypeSafe.Value.Format(FSharpDisplayContext.Empty)
+                    // printfn "name -> %s" name
 
-                match
-                    matchers
-                    |> Seq.tryFind(fun k -> name.Contains(k.Key))
-                    with
-                | Some v ->
-                    state.Add (v.Value, range)
-                | _ -> ()
-            // printfn "ctx.TypedTree.Declarations --> %A" ctx.TypedTree.Declarations
-            ctx.TypedTree.Declarations |> List.iter (visitDeclaration handler)
-            state
-            |> Seq.map (fun (hash, r) ->
-                { Type = "Weak hashing analyzer"
-                  Message = sprintf "%A shouldn't be used.  Consider changing to SHA256 or SHA512." hash
-                  Code = toCode hash
-                  Severity = Warning
-                  Range = r
-                  Fixes = []}
+                    match
+                        matchers
+                        |> Seq.tryFind(fun k -> name.Contains(k.Key))
+                        with
+                    | Some v ->
+                        state.Add (v.Value, range)
+                    | _ -> ()
+                // printfn "ctx.TypedTree.Declarations --> %A" ctx.TypedTree.Declarations
+                ctx.TypedTree.Declarations |> List.iter (visitDeclaration handler)
+                state
+                |> Seq.map (fun (hash, r) ->
+                    { Type = "Weak hashing analyzer"
+                      Message = sprintf "%A shouldn't be used.  Consider changing to SHA256 or SHA512." hash
+                      Code = toCode hash
+                      Severity = Warning
+                      Range = r
+                      Fixes = []}
 
-            )
-            |> Seq.toList
+                )
+                |> Seq.toList
