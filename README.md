@@ -2,7 +2,7 @@
 
 ## What?
 
-This is a set of [security analyzers](https://owasp.org/www-community/Source_Code_Analysis_Tools) using the [FSharp Language](https://github.com/ionide/FSharp.Analyzers.SDK).
+This is a set of [security analyzers](https://owasp.org/www-community/Source_Code_Analysis_Tools) for the [FSharp Language](https://fsharp.org/) using the [FSharp Analyzers SDK](https://github.com/ionide/FSharp.Analyzers.SDK).
 
 ### Currently supported analyzers
 
