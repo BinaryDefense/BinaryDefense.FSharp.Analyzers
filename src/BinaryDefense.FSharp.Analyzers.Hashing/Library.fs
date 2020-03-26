@@ -166,7 +166,7 @@ module Hashing =
             (sprintf "%s.Create" typedefof<SHA1>.FullName), SHA1
         ] |> dict
 
-    forTheReflectionGods () |> printfn "%A"
+    // forTheReflectionGods () |> printfn "%A"
     [<Analyzer>]
     let weakHashingAnalyzer : Analyzer =
         // waitForDebuggerAttached ("App")
@@ -177,18 +177,18 @@ module Hashing =
                 let state = ResizeArray<WeakHash * range>()
                 let handler (range: range) (m: FSharpMemberOrFunctionOrValue) =
 
-                    printfn "DeclaringEntity --> %A" m.DeclaringEntity
-                    printfn "TryGetFullDisplayName -> %A" <| m.TryGetFullDisplayName()
-                    printfn "FullTypeSafe -> %A" m.FullTypeSafe
-                    m.FullTypeSafe
-                    |> Option.iter(fun fts ->
-                        try
-                            printfn "FullTypeSafe.IsUnresolved -> %A" fts.IsUnresolved
-                            printfn "FullTypeSafe.TypeDefinition -> %A" fts.TypeDefinition
-                            printfn "FullTypeSafe.TypeDefinition -> %A" fts.TypeDefinition.DeclaredInterfaces
-                        with e -> eprintfn "%A" e
-                        // fts.TypeDefinition.
-                    )
+                    // printfn "DeclaringEntity --> %A" m.DeclaringEntity
+                    // printfn "TryGetFullDisplayName -> %A" <| m.TryGetFullDisplayName()
+                    // printfn "FullTypeSafe -> %A" m.FullTypeSafe
+                    // m.FullTypeSafe
+                    // |> Option.iter(fun fts ->
+                    //     try
+                    //         printfn "FullTypeSafe.IsUnresolved -> %A" fts.IsUnresolved
+                    //         printfn "FullTypeSafe.TypeDefinition -> %A" fts.TypeDefinition
+                    //         printfn "FullTypeSafe.TypeDefinition -> %A" fts.TypeDefinition.DeclaredInterfaces
+                    //     with e -> eprintfn "%A" e
+                    //     // fts.TypeDefinition.
+                    // )
                     // let v = m.
                     // v.
                     // printfn "%A"
