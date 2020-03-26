@@ -24,7 +24,7 @@ Also, there's growing need for security based tools in the FSharp ecosystem.  Ma
 Use paket to install the analyzer into a specialized Analyzers dependency group like this:
 
 ```sh
-paket add NpgsqlFSharpAnalyzer --group Analyzers
+paket add BinaryDefense.FSharp.Analyzers.Hashing --group Analyzers
 ```
 
 DO NOT use storage:none because we want the analyzer package to be downloaded physically into packages/analyzers directory.
@@ -68,7 +68,7 @@ macOS/Linux | Windows
 
 Package | Stable | Prerelease
 --- | --- | ---
-BinaryDefense.FSharp.Analyzers | [![NuGet Badge](https://buildstats.info/nuget/BinaryDefense.FSharp.Analyzers.Hashing)](https://www.nuget.org/packages/BinaryDefense.FSharp.Analyzers.Hashing/) | [![NuGet Badge](https://buildstats.info/nuget/BinaryDefense.FSharp.Analyzers.Hashing?includePreReleases=true)](https://www.nuget.org/packages/BinaryDefense.FSharp.Analyzers.Hashing/)
+BinaryDefense.FSharp.Analyzers.Hashing | [![NuGet Badge](https://buildstats.info/nuget/BinaryDefense.FSharp.Analyzers.Hashing)](https://www.nuget.org/packages/BinaryDefense.FSharp.Analyzers.Hashing/) | [![NuGet Badge](https://buildstats.info/nuget/BinaryDefense.FSharp.Analyzers.Hashing?includePreReleases=true)](https://www.nuget.org/packages/BinaryDefense.FSharp.Analyzers.Hashing/)
 
 ---
 
