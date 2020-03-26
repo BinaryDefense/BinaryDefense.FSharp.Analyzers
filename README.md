@@ -52,7 +52,7 @@ dotnet tool restore
 Then run it against your project
 
 ```sh
-dotnet fsharp-analyzers --analyzers-path ./src/MyLibrary/MyLibrary.fsproj
+dotnet fsharp-analyzers --project ./src/MyLibrary/MyLibrary.fsproj
 ```
 
 ---
