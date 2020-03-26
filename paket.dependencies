@@ -1,7 +1,15 @@
 source https://www.nuget.org/api/v2
 source https://api.nuget.org/v3/index.json
+source paket-files/github.com/fsharp/FsAutoComplete/lib
 storage: none
 clitool dotnet-mono 0.5.2
+
+git https://github.com/fsharp/FsAutoComplete.git master build:"build.cmd", Packages: /bin/pkgs/, OS: win
+git https://github.com/fsharp/FsAutoComplete.git master build:"build.sh", Packages: /bin/pkgs/, OS: osx
+git https://github.com/fsharp/FsAutoComplete.git master build:"build.sh", Packages: /bin/pkgs/, OS: linux
+
+nuget ProjectSystem
+
 nuget FSharp.Core
 nuget Microsoft.SourceLink.GitHub prerelease copy_local: true
 nuget Microsoft.NETFramework.ReferenceAssemblies copy_local: true
@@ -9,6 +17,7 @@ nuget Expecto 8.13.1
 nuget YoloDev.Expecto.TestSdk 0.8.0
 nuget Microsoft.NET.Test.Sdk 15.7.2
 nuget altcover ~> 6
+nuget FSharp.Compiler.Service 34.1.1
 nuget FSharp.Analyzers.SDK 0.4.0
 
 // [ FAKE GROUP ]

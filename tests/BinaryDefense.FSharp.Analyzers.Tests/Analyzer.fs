@@ -5,6 +5,8 @@ open System.IO
 open FSharp.Compiler.SourceCodeServices
 open FSharp.Compiler.Text
 open FSharp.Analyzers.SDK
+open ProjectSystem
+
 let checker =
     FSharpChecker.Create(
         projectCacheSize = 200,
@@ -12,6 +14,7 @@ let checker =
         keepAssemblyContents = true,
         ImplicitlyStartBackgroundWork = true)
 
+let projectSystem = ProjectController(checker)
 
 let dumpOpts (opts :  FSharpProjectOptions) =
     printfn  "FSharpProjectOptions.OtherOptions ->"
@@ -23,6 +26,29 @@ let toAbsolutePath path =
     FileInfo(path).FullName
 
 let loadProject file =
+    async {
+        let! projLoading = projectSystem.LoadProject file ignore FSIRefs.TFM.NetCore (fun _ _ _ -> ())
+        let filesToCheck =
+            match projLoading with
+            | ProjectResponse.Project proj ->
+                // printInfo "Project %s loaded" file
+                proj.projectFiles
+                |> List.choose (fun file ->
+                    projectSystem.GetProjectOptions file
+                    |> Option.map (fun opts -> file, opts)
+                )
+                |> Some
+            | ProjectResponse.ProjectError(errorDetails) ->
+                printfn "Project loading failed: %A" errorDetails
+                None
+            | ProjectResponse.ProjectLoading(_)
+            | ProjectResponse.WorkspaceLoad(_) ->
+                None
+
+        return filesToCheck
+    } |> Async.RunSynchronously
+
+let loadFile file =
     async {
         let! source = IO.File.ReadAllTextAsync file |> Async.AwaitTask
         let! (opts, error) = checker.GetProjectOptionsFromScript(file, SourceText.ofString source, assumeDotNetFramework = false, useSdkRefs = true, useFsiAuxLib = true, otherFlags = [|"--targetprofile:netstandard" |])
@@ -38,7 +64,7 @@ let loadProject file =
                 else
                     i
             )
-        // dumpOpts opts
+        dumpOpts opts
         return file,{ opts with OtherOptions = newOO}
     } |> Async.RunSynchronously
 
@@ -94,21 +120,25 @@ let createContext (file, text: string, p: FSharpParseFileResults,c: FSharpCheckF
         Some context
     | _ -> None
 
+type Loader =
+| Project of string
+| File of string
 
-let runProject proj (analyzers : Analyzer seq)  =
-    let path =
-        Path.Combine(Environment.CurrentDirectory, proj)
-        |> Path.GetFullPath
+let runProject (proj : Loader) (analyzers : Analyzer seq)  =
+    // let path =
+    //     Path.Combine(Environment.CurrentDirectory, proj)
+    //     |> Path.GetFullPath
 
-    let file =
-        loadProject path
-        |> typeCheckFile
-        |> Option.bind createContext
+    let files =
+        match proj with
+        | Project f -> loadProject f
+        | File f -> Some [ loadFile f ]
+        |> Option.map(List.choose typeCheckFile)
+        |> Option.map(List.choose createContext)
 
-
-    file
-    |> Option.map(fun ctx ->
+    files
+    |> Option.map(List.collect(fun ctx ->
         analyzers
         |> Seq.collect (fun analyzer -> analyzer ctx)
         |> Seq.toList
-    )
+    ))
