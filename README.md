@@ -1,21 +1,74 @@
 # BinaryDefense.FSharp.Analyzers
 
-[Enter useful description for BinaryDefense.FSharp.Analyzers]
+## What?
+
+This is a set of [security analyzers](https://owasp.org/www-community/Source_Code_Analysis_Tools) using the [FSharp Language](https://github.com/ionide/FSharp.Analyzers.SDK).
+
+### Currently supported analyzers
+
+* Hashing
+  * Looks for MD5 creation
+  * Looks for SHA1 creation
+
+
+## Why?
+
+Detecting security issues early in your codebase can save your company from embarrassment or financial repercussions.
+
+Also, there's growing need for security based tools in the FSharp ecosystem.  Many tools cover CSharp projects but not FSharp. This project seeks to remedy that.
+
+## How?
+
+### 1 - Install the analyzer using paket
+
+Use paket to install the analyzer into a specialized Analyzers dependency group like this:
+
+```sh
+paket add NpgsqlFSharpAnalyzer --group Analyzers
+```
+
+DO NOT use storage:none because we want the analyzer package to be downloaded physically into packages/analyzers directory.
+
+### 2.a - Enable analyzers in Ionide
+
+Make sure you have these settings in Ionide for FSharp
+
+```json
+{
+    "FSharp.enableAnalyzers": true,
+    "FSharp.analyzersPath": [
+        "./packages/analyzers"
+    ]
+}
+```
+
+### 2.b - Install the fsharp-analyzers tool
+
+```sh
+dotnet tool add fsharp-analyzers
+dotnet tool restore
+```
+
+Then run it against your project
+
+```sh
+dotnet fsharp-analyzers --analyzers-path ./src/MyLibrary/MyLibrary.fsproj
+```
 
 ---
 
-## Builds
+<!-- ## Builds
 
 macOS/Linux | Windows
 --- | ---
 [![Travis Badge](https://travis-ci.org/TheAngryByrd/BinaryDefense.FSharp.Analyzers.svg?branch=master)](https://travis-ci.org/TheAngryByrd/BinaryDefense.FSharp.Analyzers) | [![Build status](https://ci.appveyor.com/api/projects/status/github/TheAngryByrd/BinaryDefense.FSharp.Analyzers?svg=true)](https://ci.appveyor.com/project/TheAngryByrd/BinaryDefense.FSharp.Analyzers)
-[![Build History](https://buildstats.info/travisci/chart/TheAngryByrd/BinaryDefense.FSharp.Analyzers)](https://travis-ci.org/TheAngryByrd/BinaryDefense.FSharp.Analyzers/builds) | [![Build History](https://buildstats.info/appveyor/chart/TheAngryByrd/BinaryDefense.FSharp.Analyzers)](https://ci.appveyor.com/project/TheAngryByrd/BinaryDefense.FSharp.Analyzers)  
+[![Build History](https://buildstats.info/travisci/chart/TheAngryByrd/BinaryDefense.FSharp.Analyzers)](https://travis-ci.org/TheAngryByrd/BinaryDefense.FSharp.Analyzers/builds) | [![Build History](https://buildstats.info/appveyor/chart/TheAngryByrd/BinaryDefense.FSharp.Analyzers)](https://ci.appveyor.com/project/TheAngryByrd/BinaryDefense.FSharp.Analyzers)   -->
 
 ## NuGet 
 
 Package | Stable | Prerelease
 --- | --- | ---
-BinaryDefense.FSharp.Analyzers | [![NuGet Badge](https://buildstats.info/nuget/BinaryDefense.FSharp.Analyzers)](https://www.nuget.org/packages/BinaryDefense.FSharp.Analyzers/) | [![NuGet Badge](https://buildstats.info/nuget/BinaryDefense.FSharp.Analyzers?includePreReleases=true)](https://www.nuget.org/packages/BinaryDefense.FSharp.Analyzers/)
+BinaryDefense.FSharp.Analyzers | [![NuGet Badge](https://buildstats.info/nuget/BinaryDefense.FSharp.Analyzers.Hashing)](https://www.nuget.org/packages/BinaryDefense.FSharp.Analyzers.Hashing/) | [![NuGet Badge](https://buildstats.info/nuget/BinaryDefense.FSharp.Analyzers.Hashing?includePreReleases=true)](https://www.nuget.org/packages/BinaryDefense.FSharp.Analyzers.Hashing/)
 
 ---
 
