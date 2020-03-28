@@ -7,14 +7,16 @@
   <PropertyGroup>
     <Title>BinaryDefense.FSharp.Analyzers.Hashing</Title>
     <Description>Looks for insecure hashing functions</Description>
-
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
     <Optimize>true</Optimize>
     <Tailcalls>true</Tailcalls>
-    
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\..\paket-files\TheAngryByrd\FsLibLog\src\FsLibLog\FsLibLog.fs">
+      <Paket>True</Paket>
+      <Link>paket-files/FsLibLog.fs</Link>
+    </Compile>
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Library.fs" />
   </ItemGroup>

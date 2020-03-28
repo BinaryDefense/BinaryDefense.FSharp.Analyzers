@@ -20,6 +20,9 @@ nuget altcover ~> 6
 nuget FSharp.Compiler.Service 34.1.1
 nuget FSharp.Analyzers.SDK 0.4.0
 
+
+github TheAngryByrd/FsLibLog:0dc37e8471dcece8f89d3f8cc9191be206d6fb01 src/FsLibLog/FsLibLog.fs
+
 // [ FAKE GROUP ]
 group Build
     storage: none

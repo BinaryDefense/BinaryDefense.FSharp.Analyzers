@@ -236,6 +236,20 @@ let dotnetRestore _ =
             }) dir)
     |> Seq.iter(retryIfInCI 10)
 
+let replacements =
+    [ "FsLibLog\\n", "BinaryDefense.Logging\n"
+      "FsLibLog\\.", "BinaryDefense.Logging." ]
+
+let fslibLogGlobs = !! "paket-files/TheAngryByrd/FsLibLog/**/FsLibLog*.fs"
+
+let replaceTemplateFiles _ =
+    replacements
+    |> List.iter (fun (``match``, replace) ->
+        Shell.regexReplaceInFilesWithEncoding
+            ``match``
+            replace
+            Text.Encoding.UTF8 (fslibLogGlobs))
+
 
 let dotnetBuild ctx =
     let args =
@@ -498,6 +512,7 @@ let releaseDocs ctx =
 
 Target.create "Clean" clean
 Target.create "DotnetRestore" dotnetRestore
+Target.create "ReplaceTemplateFilesNamespace" replaceTemplateFiles
 Target.create "DotnetBuild" dotnetBuild
 Target.create "DotnetTest" dotnetTest
 Target.create "GenerateCoverageReport" generateCoverageReport
@@ -528,7 +543,8 @@ Target.create "ReleaseDocs" releaseDocs
 "DotnetRestore" ?=> "GenerateAssemblyInfo"
 "GenerateAssemblyInfo" ?=> "DotnetBuild"
 "GenerateAssemblyInfo" ==> "PublishToNuGet"
-
+"DotnetRestore" ==> "ReplaceTemplateFilesNamespace"
+"ReplaceTemplateFilesNamespace" ==> "DotnetBuild"
 "DotnetBuild" ==> "BuildDocs"
 "BuildDocs" ==> "ReleaseDocs"
 "BuildDocs" ?=> "PublishToNuget"
