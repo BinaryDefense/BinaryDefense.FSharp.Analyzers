@@ -1,6 +1,9 @@
 namespace BinaryDefense.FSharp.Analyzers
+open BinaryDefense.Logging
+open BinaryDefense.Logging.Types
 open System.Security.Cryptography
 open System.Text
+
 module Hashing =
     open System
     open FSharp.Analyzers.SDK
@@ -9,7 +12,6 @@ module Hashing =
 
 
     let rec visitExpr memberCallHandler (e:FSharpExpr) =
-        // printfn "e -> %A" e
         match e with
         | BasicPatterns.AddressOf(lvalueExpr) ->
             visitExpr memberCallHandler lvalueExpr
@@ -18,11 +20,6 @@ module Hashing =
         | BasicPatterns.Application(funcExpr, typeArgs, argExprs) ->
             visitExpr memberCallHandler funcExpr; visitExprs memberCallHandler argExprs
         | BasicPatterns.Call(objExprOpt, memberOrFunc, typeArgs1, typeArgs2, argExprs) ->
-            // printfn "objExprOpt -> %A " objExprOpt
-            // printfn "memberOrFunc -> %A" memberOrFunc
-            // printfn "typeArgs1 -> %A " typeArgs1
-            // printfn "typeArgs2 -> %A " typeArgs2
-            // printfn "argExprs -> %A " argExprs
             memberCallHandler e.Range memberOrFunc
             visitObjArg memberCallHandler objExprOpt; visitExprs memberCallHandler argExprs
         | BasicPatterns.Coerce(targetType, inpExpr) ->
@@ -48,7 +45,6 @@ module Hashing =
         | BasicPatterns.NewDelegate(delegateType, delegateBodyExpr) ->
             visitExpr memberCallHandler delegateBodyExpr
         | BasicPatterns.NewObject(objType, typeArgs, argExprs) ->
-            // printfn "NewObject.objType -> %A" objType
             memberCallHandler e.Range objType
             visitExprs memberCallHandler argExprs
         | BasicPatterns.NewRecord(recordType, argExprs) ->
@@ -98,22 +94,16 @@ module Hashing =
         | BasicPatterns.WhileLoop(guardExpr, bodyExpr) ->
             visitExpr memberCallHandler guardExpr; visitExpr memberCallHandler bodyExpr
         | BasicPatterns.BaseValue baseType ->
-            // printfn "BaseValue: %A" baseType;
             ()
         | BasicPatterns.DefaultValue defaultType ->
-            // printfn "DefaultValue: %A" defaultType;
             ()
         | BasicPatterns.ThisValue thisType ->
-            // printfn "ThisValue: %A" thisType;
             ()
         | BasicPatterns.Const(constValueObj, constType) ->
-            // printfn "Const: %A" (constValueObj, constType);
             ()
         | BasicPatterns.Value(valueToGet) ->
-            // printfn "Value: %A" valueToGet;
             memberCallHandler e.Range valueToGet
         | other ->
-            // printfn "Other: %A" other;
             ()
 
     and visitExprs f exprs =
@@ -138,6 +128,11 @@ module Hashing =
     type WeakHash =
     | MD5
     | SHA1
+    with
+        override x.ToString() =
+            match x with
+            | MD5 -> "MD5"
+            | SHA1 -> "SHA1"
 
     let toCode = function
     | MD5 -> "BDH0001"
@@ -154,10 +149,6 @@ module Hashing =
     // ()
     // #endif
 
-    let forTheReflectionGods () =
-        use sha1 = SHA1.Create()
-        sha1.ComputeHash(UTF8Encoding().GetBytes("foo"))
-
     let matchers =
         [
             "System.Security.Cryptography.MD5CryptoServiceProvider", MD5
@@ -166,7 +157,6 @@ module Hashing =
             (sprintf "%s.Create" typedefof<SHA1>.FullName), SHA1
         ] |> dict
 
-    // forTheReflectionGods () |> printfn "%A"
     [<Analyzer>]
     let weakHashingAnalyzer : Analyzer =
         // waitForDebuggerAttached ("App")
@@ -175,29 +165,27 @@ module Hashing =
                 []
             else
                 let state = ResizeArray<WeakHash * range>()
-                let handler (range: range) (m: FSharpMemberOrFunctionOrValue) =
 
-                    // printfn "DeclaringEntity --> %A" m.DeclaringEntity
-                    // printfn "TryGetFullDisplayName -> %A" <| m.TryGetFullDisplayName()
-                    // printfn "FullTypeSafe -> %A" m.FullTypeSafe
-                    // m.FullTypeSafe
-                    // |> Option.iter(fun fts ->
-                    //     try
-                    //         printfn "FullTypeSafe.IsUnresolved -> %A" fts.IsUnresolved
-                    //         printfn "FullTypeSafe.TypeDefinition -> %A" fts.TypeDefinition
-                    //         printfn "FullTypeSafe.TypeDefinition -> %A" fts.TypeDefinition.DeclaredInterfaces
-                    //     with e -> eprintfn "%A" e
-                    //     // fts.TypeDefinition.
-                    // )
-                    // let v = m.
-                    // v.
-                    // printfn "%A"
+                let handler (range: range) (m: FSharpMemberOrFunctionOrValue) =
+                    try
+                        // failwith "LOLOL"
+                        let logger = LogProvider.getLoggerByName "BinaryDefense.FSharp.Analyzers.Hashing.handler"
+                        logger.info(
+                            Log.setMessage "Hello World!"
+                        )
+                        logger.debug(
+                            Log.setMessage "Handler hit {FullTypeSafe}"
+                            // >> Log.addContextDestructured "LOL" null
+                            // >> Log.addContextDestructured "DeclaringEntity" m.DeclaringEntity
+                            // >> Log.addContextDestructured "TryGetFullDisplayName" (m.TryGetFullDisplayName())
+                            >> Log.addContextDestructured "FullTypeSafe" m.FullTypeSafe
+                        )
+                    with e -> eprintf "Logging exception : %A" e
                     let name =
                         if m.DeclaringEntity.IsSome then
                             String.Join(".", m.DeclaringEntity.Value.FullName, m.DisplayName)
                         else
                             m.FullTypeSafe.Value.Format(FSharpDisplayContext.Empty)
-                    // printfn "name -> %s" name
 
                     match
                         matchers
@@ -216,6 +204,5 @@ module Hashing =
                       Severity = Warning
                       Range = r
                       Fixes = []}
-
                 )
                 |> Seq.toList

@@ -18,6 +18,20 @@ NUGET
       Microsoft.NETCore.App (>= 2.0) - restriction: >= netcoreapp2.0
       System.Runtime.Loader (>= 4.3) - restriction: && (>= netcoreapp1.0) (< netcoreapp2.0)
       System.ValueTuple (>= 4.4) - restriction: && (>= netcoreapp1.0) (< netcoreapp2.0)
+    Dotnet.ProjInfo (0.39) - restriction: || (>= net461) (>= netstandard2.0)
+      FSharp.Core (>= 4.6.2) - restriction: || (>= net461) (>= netstandard2.0)
+      Microsoft.NETFramework.ReferenceAssemblies (>= 1.0) - restriction: || (>= net461) (>= netstandard2.0)
+      System.ValueTuple (>= 4.4) - restriction: || (>= net461) (>= netstandard2.0)
+    Dotnet.ProjInfo.Workspace (0.39) - restriction: || (>= net461) (>= netstandard2.0)
+      Dotnet.ProjInfo (>= 0.39) - restriction: || (>= net461) (>= netstandard2.0)
+      FSharp.Core (>= 4.6.2) - restriction: || (>= net461) (>= netstandard2.0)
+      Microsoft.NETFramework.ReferenceAssemblies (>= 1.0) - restriction: || (>= net461) (>= netstandard2.0)
+      Sln (>= 0.3) - restriction: || (>= net461) (>= netstandard2.0)
+    Dotnet.ProjInfo.Workspace.FCS (0.39) - restriction: || (>= net461) (>= netstandard2.0)
+      Dotnet.ProjInfo.Workspace (>= 0.39) - restriction: || (>= net461) (>= netstandard2.0)
+      FSharp.Compiler.Service (>= 34.1) - restriction: || (>= net461) (>= netstandard2.0)
+      FSharp.Core (>= 4.6.2) - restriction: || (>= net461) (>= netstandard2.0)
+      Microsoft.NETFramework.ReferenceAssemblies (>= 1.0) - restriction: || (>= net461) (>= netstandard2.0)
     Expecto (8.13.1)
       FSharp.Core (>= 4.3.4) - restriction: || (>= net461) (>= netstandard2.0)
       Mono.Cecil (>= 0.11) - restriction: || (>= net461) (>= netstandard2.0)
@@ -418,43 +432,31 @@ NUGET
       FSharp.Core (>= 4.3.4) - restriction: || (>= net461) (>= netcoreapp2.0)
       System.Collections.Immutable (>= 1.4) - restriction: || (>= net461) (>= netcoreapp2.0)
       System.ValueTuple (>= 4.4) - restriction: >= net461
-  remote: paket-files/github.com/fsharp/FsAutoComplete/lib
-    Dotnet.ProjInfo (0.38.0) - restriction: || (>= net461) (>= netstandard2.0)
-      FSharp.Core (>= 4.6.2) - restriction: || (>= net461) (>= netstandard2.0)
-      Microsoft.NETFramework.ReferenceAssemblies (>= 1.0) - restriction: || (>= net461) (>= netstandard2.0)
-      System.ValueTuple (>= 4.4) - restriction: || (>= net461) (>= netstandard2.0)
-    Dotnet.ProjInfo.Workspace (0.38.0) - restriction: || (>= net461) (>= netstandard2.0)
-      Dotnet.ProjInfo (>= 0.38) - restriction: || (>= net461) (>= netstandard2.0)
-      FSharp.Core (>= 4.6.2) - restriction: || (>= net461) (>= netstandard2.0)
-      Microsoft.NETFramework.ReferenceAssemblies (>= 1.0) - restriction: || (>= net461) (>= netstandard2.0)
-      Sln (>= 0.3) - restriction: || (>= net461) (>= netstandard2.0)
-    Dotnet.ProjInfo.Workspace.FCS (0.38.0) - restriction: || (>= net461) (>= netstandard2.0)
-      Dotnet.ProjInfo.Workspace (>= 0.38) - restriction: || (>= net461) (>= netstandard2.0)
-      FSharp.Compiler.Service (>= 34.1) - restriction: || (>= net461) (>= netstandard2.0)
-      FSharp.Core (>= 4.6.2) - restriction: || (>= net461) (>= netstandard2.0)
-      Microsoft.NETFramework.ReferenceAssemblies (>= 1.0) - restriction: || (>= net461) (>= netstandard2.0)
   remote: paket-files/github.com/fsharp/FsAutoComplete/bin/pkgs
     ProjectSystem (0.41.1)
-      Dotnet.ProjInfo (>= 0.38) - restriction: || (>= net461) (>= netstandard2.0)
-      Dotnet.ProjInfo.Workspace.FCS (>= 0.38) - restriction: || (>= net461) (>= netstandard2.0)
+      Dotnet.ProjInfo (>= 0.39) - restriction: || (>= net461) (>= netstandard2.0)
+      Dotnet.ProjInfo.Workspace.FCS (>= 0.39) - restriction: || (>= net461) (>= netstandard2.0)
       FSharp.Compiler.Service (>= 34.1.1) - restriction: || (>= net461) (>= netstandard2.0)
       Microsoft.NETFramework.ReferenceAssemblies (>= 1.0) - restriction: || (>= net461) (>= netstandard2.0)
       Newtonsoft.Json (>= 12.0.3) - restriction: || (>= net461) (>= netstandard2.0)
       Sln (>= 0.3) - restriction: || (>= net461) (>= netstandard2.0)
 GIT
   remote: https://github.com/fsharp/FsAutoComplete.git
-     (de3c8f3ff33118ea61697fc273b0dd004083df93)
+     (f572383ee49e950b7b37733092bd4dff31c98516)
       build: build.cmd
       path: /bin/pkgs/
       os: win
-     (de3c8f3ff33118ea61697fc273b0dd004083df93)
+     (f572383ee49e950b7b37733092bd4dff31c98516)
       build: build.sh
       path: /bin/pkgs/
       os: osx
-     (de3c8f3ff33118ea61697fc273b0dd004083df93)
+     (f572383ee49e950b7b37733092bd4dff31c98516)
       build: build.sh
       path: /bin/pkgs/
       os: linux
+GITHUB
+  remote: TheAngryByrd/FsLibLog
+    src/FsLibLog/FsLibLog.fs (0dc37e8471dcece8f89d3f8cc9191be206d6fb01)
 GROUP Build
 STORAGE: NONE
 NUGET
