@@ -64,7 +64,7 @@ let loadFile file =
                 else
                     i
             )
-        dumpOpts opts
+        // dumpOpts opts
         return file,{ opts with OtherOptions = newOO}
     } |> Async.RunSynchronously
 
