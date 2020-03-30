@@ -4,20 +4,20 @@ open System.Reflection
 
 [<assembly: AssemblyTitleAttribute("BinaryDefense.FSharp.Analyzers.Tests")>]
 [<assembly: AssemblyProductAttribute("BinaryDefense.FSharp.Analyzers")>]
-[<assembly: AssemblyVersionAttribute("0.1.0")>]
-[<assembly: AssemblyMetadataAttribute("ReleaseDate","2020-03-26T00:00:00.0000000")>]
-[<assembly: AssemblyFileVersionAttribute("0.1.0")>]
-[<assembly: AssemblyInformationalVersionAttribute("0.1.0")>]
+[<assembly: AssemblyVersionAttribute("0.1.1")>]
+[<assembly: AssemblyMetadataAttribute("ReleaseDate","2020-03-30T00:00:00.0000000")>]
+[<assembly: AssemblyFileVersionAttribute("0.1.1")>]
+[<assembly: AssemblyInformationalVersionAttribute("0.1.1")>]
 [<assembly: AssemblyMetadataAttribute("ReleaseChannel","release")>]
-[<assembly: AssemblyMetadataAttribute("GitHash","791957f2ad776d41ac920184b1d51151352f62ac")>]
+[<assembly: AssemblyMetadataAttribute("GitHash","083957ca042c4c1585e355386b3052e50dfa74b3")>]
 do ()
 
 module internal AssemblyVersionInformation =
     let [<Literal>] AssemblyTitle = "BinaryDefense.FSharp.Analyzers.Tests"
     let [<Literal>] AssemblyProduct = "BinaryDefense.FSharp.Analyzers"
-    let [<Literal>] AssemblyVersion = "0.1.0"
-    let [<Literal>] AssemblyMetadata_ReleaseDate = "2020-03-26T00:00:00.0000000"
-    let [<Literal>] AssemblyFileVersion = "0.1.0"
-    let [<Literal>] AssemblyInformationalVersion = "0.1.0"
+    let [<Literal>] AssemblyVersion = "0.1.1"
+    let [<Literal>] AssemblyMetadata_ReleaseDate = "2020-03-30T00:00:00.0000000"
+    let [<Literal>] AssemblyFileVersion = "0.1.1"
+    let [<Literal>] AssemblyInformationalVersion = "0.1.1"
     let [<Literal>] AssemblyMetadata_ReleaseChannel = "release"
-    let [<Literal>] AssemblyMetadata_GitHash = "791957f2ad776d41ac920184b1d51151352f62ac"
+    let [<Literal>] AssemblyMetadata_GitHash = "083957ca042c4c1585e355386b3052e50dfa74b3"
