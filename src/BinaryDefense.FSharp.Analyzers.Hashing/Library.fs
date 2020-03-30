@@ -2,14 +2,12 @@ namespace BinaryDefense.FSharp.Analyzers
 open BinaryDefense.Logging
 open BinaryDefense.Logging.Types
 open System.Security.Cryptography
-open System.Text
 
 module Hashing =
     open System
     open FSharp.Analyzers.SDK
     open FSharp.Compiler.SourceCodeServices
     open FSharp.Compiler.Range
-
 
     let rec visitExpr memberCallHandler (e:FSharpExpr) =
         match e with
@@ -151,10 +149,10 @@ module Hashing =
 
     let matchers =
         [
-            "System.Security.Cryptography.MD5CryptoServiceProvider", MD5
-            "System.Security.Cryptography.MD5.Create", MD5
-            "System.Security.Cryptography.SHA1CryptoServiceProvider", SHA1
-            (sprintf "%s.Create" typedefof<SHA1>.FullName), SHA1
+            typeof<MD5CryptoServiceProvider>.FullName, MD5
+            (sprintf "%s.Create" typeof<MD5>.FullName), MD5
+            typeof<SHA1CryptoServiceProvider>.FullName, SHA1
+            (sprintf "%s.Create" typeof<SHA1>.FullName), SHA1
         ] |> dict
 
     [<Analyzer>]
@@ -167,20 +165,13 @@ module Hashing =
                 let state = ResizeArray<WeakHash * range>()
 
                 let handler (range: range) (m: FSharpMemberOrFunctionOrValue) =
-                    try
-                        // failwith "LOLOL"
-                        let logger = LogProvider.getLoggerByName "BinaryDefense.FSharp.Analyzers.Hashing.handler"
-                        logger.info(
-                            Log.setMessage "Hello World!"
-                        )
-                        logger.debug(
-                            Log.setMessage "Handler hit {FullTypeSafe}"
-                            // >> Log.addContextDestructured "LOL" null
-                            // >> Log.addContextDestructured "DeclaringEntity" m.DeclaringEntity
-                            // >> Log.addContextDestructured "TryGetFullDisplayName" (m.TryGetFullDisplayName())
-                            >> Log.addContextDestructured "FullTypeSafe" m.FullTypeSafe
-                        )
-                    with e -> eprintf "Logging exception : %A" e
+                    let logger = LogProvider.getLoggerByName "BinaryDefense.FSharp.Analyzers.Hashing.handler"
+                    // logger.info(
+                    //     Log.setMessage "Hello World!"
+                    // )
+                    // logger.debug(
+                    //     Log.setMessage "Handler hit {FullTypeSafe}"
+                    // )
                     let name =
                         if m.DeclaringEntity.IsSome then
                             String.Join(".", m.DeclaringEntity.Value.FullName, m.DisplayName)
@@ -194,7 +185,6 @@ module Hashing =
                     | Some v ->
                         state.Add (v.Value, range)
                     | _ -> ()
-                // printfn "ctx.TypedTree.Declarations --> %A" ctx.TypedTree.Declarations
                 ctx.TypedTree.Declarations |> List.iter (visitDeclaration handler)
                 state
                 |> Seq.map (fun (hash, r) ->
