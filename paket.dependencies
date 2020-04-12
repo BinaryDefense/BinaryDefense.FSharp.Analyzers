@@ -8,18 +8,18 @@ git https://github.com/fsharp/FsAutoComplete.git master build:"build.cmd", Packa
 git https://github.com/fsharp/FsAutoComplete.git master build:"build.sh", Packages: /bin/pkgs/, OS: osx
 git https://github.com/fsharp/FsAutoComplete.git master build:"build.sh", Packages: /bin/pkgs/, OS: linux
 
-nuget ProjectSystem
 
 nuget FSharp.Core
+nuget FSharp.Analyzers.SDK 0.4.1
+
+// testing deps
 nuget Microsoft.SourceLink.GitHub prerelease copy_local: true
 nuget Microsoft.NETFramework.ReferenceAssemblies copy_local: true
 nuget Expecto 8.13.1
 nuget YoloDev.Expecto.TestSdk 0.8.0
 nuget Microsoft.NET.Test.Sdk 15.7.2
 nuget altcover ~> 6
-nuget FSharp.Compiler.Service 34.1.1
-nuget FSharp.Analyzers.SDK 0.4.0
-
+nuget ProjectSystem
 
 github TheAngryByrd/FsLibLog:0dc37e8471dcece8f89d3f8cc9191be206d6fb01 src/FsLibLog/FsLibLog.fs
 
