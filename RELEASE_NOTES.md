@@ -1,4 +1,4 @@
-#### 0.2.0-beta001 - 2020-03-30
+#### 0.2.0-beta002 - 2020-03-30
 * CHANGES: Update to FSharp.Analyzers.SDK 0.4.1 (https://github.com/BinaryDefense/BinaryDefense.FSharp.Analyzers/pull/4)
 
 #### 0.1.1 - 2020-03-30
