@@ -88,8 +88,9 @@ let docsSiteBaseUrl = sprintf "https://%s.github.io/%s" gitOwner gitRepoName
 
 let disableCodeCoverage = environVarAsBoolOrDefault "DISABLE_COVERAGE" true
 
-let nugetApiKey = Environment.environVar "BD_NUGET_TOKEN"
-TraceSecrets.register "BD_NUGET_TOKEN" nugetApiKey
+let ``BD_NUGET_TOKEN`` = "BD_NUGET_TOKEN"
+let nugetApiKey = Environment.environVarOrNone ``BD_NUGET_TOKEN``
+nugetApiKey |> Option.iter (fun n -> TraceSecrets.register ``BD_NUGET_TOKEN`` n)
 
 //-----------------------------------------------------------------------------
 // Helpers
@@ -427,7 +428,7 @@ let publishToNuget _ =
     isReleaseBranchCheck ()
     Paket.push(fun c ->
         { c with
-            ApiKey = nugetApiKey
+            ApiKey = Option.defaultValue c.ApiKey nugetApiKey
             ToolType = ToolType.CreateLocalTool()
             PublishUrl = publishUrl
             WorkingDir = "dist"
