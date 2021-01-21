@@ -5,7 +5,9 @@ open System.IO
 open FSharp.Compiler.SourceCodeServices
 open FSharp.Compiler.Text
 open FSharp.Analyzers.SDK
-open ProjectSystem
+open Ionide.ProjInfo
+open Ionide.ProjInfo.Types
+
 
 let checker =
     FSharpChecker.Create(
@@ -14,7 +16,7 @@ let checker =
         keepAssemblyContents = true,
         ImplicitlyStartBackgroundWork = true)
 
-let projectSystem = ProjectController(checker)
+// let projectSystem = ProjectController(checker)
 
 let dumpOpts (opts :  FSharpProjectOptions) =
     printfn  "FSharpProjectOptions.OtherOptions ->"
@@ -25,27 +27,20 @@ let dumpOpts (opts :  FSharpProjectOptions) =
 let toAbsolutePath path =
     FileInfo(path).FullName
 
-let loadProject file =
-    async {
-        let! projLoading = projectSystem.LoadProject file ignore FSIRefs.TFM.NetCore (fun _ _ _ -> ())
-        let filesToCheck =
-            match projLoading with
-            | ProjectResponse.Project proj ->
-                // printInfo "Project %s loaded" file
-                proj.projectFiles
-                |> List.choose (fun file ->
-                    projectSystem.GetProjectOptions file
-                    |> Option.map (fun opts -> file, opts)
-                )
-                |> Some
-            | ProjectResponse.ProjectError(errorDetails) ->
-                printfn "Project loading failed: %A" errorDetails
-                None
-            | ProjectResponse.ProjectLoading(_)
-            | ProjectResponse.WorkspaceLoad(_) ->
-                None
 
-        return filesToCheck
+let loadProject toolsPath projPath =
+    async {
+        let projPath = toAbsolutePath projPath
+        let loader = WorkspaceLoader.Create(toolsPath)
+        // Uncomment for debugging
+        loader.Notifications |> Observable.add(fun e -> printfn "%A" e)
+        let parsed = loader.LoadProject projPath |> Seq.toList
+        let opts = FCS.mapToFSharpProjectOptions parsed.Head parsed
+        return
+            opts.SourceFiles
+            |> Array.map(fun file ->
+                file, opts
+            )
     } |> Async.RunSynchronously
 
 let loadFile file =
@@ -120,25 +115,42 @@ let createContext (file, text: string, p: FSharpParseFileResults,c: FSharpCheckF
         Some context
     | _ -> None
 
+let tee f x =
+    f x
+    x
+open Microsoft.FSharp.Reflection
+open System.Reflection
+let nullToolPath () =
+    let case =
+        FSharpType.GetUnionCases(typeof<ToolsPath>, BindingFlags.NonPublic)
+        |> Seq.head
+
+
+    FSharpValue.MakeUnion(case,[| box ""|], BindingFlags.NonPublic) :?> ToolsPath
+
 type Loader =
 | Project of string
 | File of string
-
+let toolsPath = lazy (
+    try
+        Init.init ()
+    with e -> nullToolPath ()
+)
 let runProject (proj : Loader) (analyzers : Analyzer seq)  =
     // let path =
     //     Path.Combine(Environment.CurrentDirectory, proj)
     //     |> Path.GetFullPath
-
     let files =
         match proj with
-        | Project f -> loadProject f
-        | File f -> Some [ loadFile f ]
-        |> Option.map(List.choose typeCheckFile)
-        |> Option.map(List.choose createContext)
+        | Project f -> loadProject toolsPath.Value f
+        | File f -> [| loadFile f |]
+        |> tee (fun fs -> fs |> Seq.iter(fun (file, opts) ->  printfn "%s" file))
+        |> Array.choose typeCheckFile
+        |> Array.choose createContext
 
     files
-    |> Option.map(List.collect(fun ctx ->
+    |> Array.collect(fun ctx ->
         analyzers
         |> Seq.collect (fun analyzer -> analyzer ctx)
-        |> Seq.toList
-    ))
+        |> Seq.toArray
+    )

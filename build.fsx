@@ -376,7 +376,7 @@ let generateAssemblyInfo _ =
 let dotnetPack ctx =
 
     // Analyzers need some additional work to bundle 3rd party dependencies: see https://github.com/ionide/FSharp.Analyzers.SDK#packaging-and-distribution
-    let publishFramework = "netcoreapp2.0"
+    let publishFramework = "net5.0"
     let args =
         [
             sprintf "/p:PackageVersion=%s" releaseNotes.NugetVersion
