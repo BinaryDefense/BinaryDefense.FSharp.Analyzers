@@ -17,7 +17,7 @@ open Fake.Core.TargetOperators
 open Fake.Api
 open Fake.BuildServer
 open Fantomas
-open Fantomas.FakeHelpers
+open Fantomas.Extras.FakeHelpers
 
 
 
@@ -355,7 +355,7 @@ let generateAssemblyInfo _ =
             AssemblyInfo.Metadata("GitHash", Git.Information.getCurrentSHA1(null))
         ]
 
-    let getProjectDetails projectPath =
+    let getProjectDetails (projectPath : string) =
         let projectName = IO.Path.GetFileNameWithoutExtension(projectPath)
         (
             projectPath,
@@ -469,7 +469,7 @@ let formatCode _ =
     |> Seq.collect id
     // Ignore AssemblyInfo
     |> Seq.filter(fun f -> f.EndsWith("AssemblyInfo.fs") |> not)
-    |> formatFilesAsync FormatConfig.FormatConfig.Default
+    |> formatFilesAsync
     |> Async.RunSynchronously
     |> Seq.iter(fun result ->
         match result with

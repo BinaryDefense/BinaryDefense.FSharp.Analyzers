@@ -42,6 +42,7 @@ group Build
     nuget Fake.BuildServer.AppVeyor 5.20.4-alpha.1642
     nuget Fake.BuildServer.Travis 5.20.4-alpha.1642
     nuget Fantomas
+    nuget Fantomas.Extras
     nuget Argu
 
 group Docs
