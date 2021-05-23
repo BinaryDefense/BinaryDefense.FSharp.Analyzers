@@ -162,9 +162,9 @@ module Hashing =
             if ctx.FileName.EndsWith("AssemblyInfo.fs") then
                 []
             else
-                let state = ResizeArray<WeakHash * Range>()
+                let state = ResizeArray<WeakHash * range>()
 
-                let handler (range: Range) (m: FSharpMemberOrFunctionOrValue) =
+                let handler (range: range) (m: FSharpMemberOrFunctionOrValue) =
                     let logger = LogProvider.getLoggerByName "BinaryDefense.FSharp.Analyzers.Hashing.handler"
                     // logger.info(
                     //     Log.setMessage "Hello World!"
