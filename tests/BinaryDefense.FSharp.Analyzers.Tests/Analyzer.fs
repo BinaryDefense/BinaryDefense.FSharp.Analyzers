@@ -34,7 +34,7 @@ let loadProject toolsPath projPath =
         let loader = WorkspaceLoader.Create(toolsPath)
         // Uncomment for debugging
         loader.Notifications |> Observable.add(fun e -> printfn "%A" e)
-        let parsed = loader.LoadProject projPath |> Seq.toList
+        let parsed = loader.LoadProjects [projPath] |> Seq.toList
         let opts = FCS.mapToFSharpProjectOptions parsed.Head parsed
         return
             opts.SourceFiles
