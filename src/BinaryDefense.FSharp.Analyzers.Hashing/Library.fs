@@ -7,7 +7,7 @@ module Hashing =
     open System
     open FSharp.Analyzers.SDK
     open FSharp.Compiler.SourceCodeServices
-    open FSharp.Compiler.Range
+    open FSharp.Compiler.Text
 
     let rec visitExpr memberCallHandler (e:FSharpExpr) =
         match e with
@@ -162,9 +162,9 @@ module Hashing =
             if ctx.FileName.EndsWith("AssemblyInfo.fs") then
                 []
             else
-                let state = ResizeArray<WeakHash * range>()
+                let state = ResizeArray<WeakHash * Range>()
 
-                let handler (range: range) (m: FSharpMemberOrFunctionOrValue) =
+                let handler (range: Range) (m: FSharpMemberOrFunctionOrValue) =
                     let logger = LogProvider.getLoggerByName "BinaryDefense.FSharp.Analyzers.Hashing.handler"
                     // logger.info(
                     //     Log.setMessage "Hello World!"
