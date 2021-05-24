@@ -44,6 +44,7 @@ group Build
     nuget Fantomas
     nuget Fantomas.Extras
     nuget Argu
+    nuget Octokit 0.48.0
 
 group Docs
     storage: none
